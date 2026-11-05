@@ -11,7 +11,7 @@ import json
 import sys
 import zlib
 
-URL_WARN_LEN = 6000
+URL_WARN_LEN = 16000
 
 
 def encode(code: str, *, edit: bool = False, theme: str | None = None) -> str:
@@ -43,7 +43,7 @@ def main() -> int:
         return 2
     url = encode(code, edit=args.edit, theme=args.theme)
     if len(url) > URL_WARN_LEN:
-        print(f"warning: URL is {len(url)} chars; cut nodes or shorten labels", file=sys.stderr)
+        print(f"note: URL is {len(url)} chars; some chat clients truncate long links", file=sys.stderr)
     print(url)
     return 0
 

@@ -9,4 +9,4 @@ Ask for a throwaway architecture / module / call-flow overview, or invoke `archp
 ## Files
 
 - `SKILL.md` — recipe
-- `encode_pako_url.py` — stdin Mermaid → mermaid.live URL (round-trip checked, warns on long URLs)
+- `encode_pako_url.py` — stdin Mermaid → mermaid.live URL (round-trip checked, notes long URLs)

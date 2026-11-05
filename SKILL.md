@@ -21,7 +21,7 @@ This skill governs the diagram portion of the task only. Continue any analysis, 
    - Module / package map → `flowchart TB` (or `LR` if flatter)
    - Request / call path → `sequenceDiagram`
    - Domain data → `erDiagram`
-   Keep nodes few (roughly under ~25). Default to one focused diagram; use a second when the request spans distinct views and separating them makes the explanation clearer.
+   Size follows the real structure, not the URL length: include every module that matters for the question. When the graph gets crowded (roughly 40+ nodes), fold related nodes into `subgraph`s before dropping any; never omit nodes just to shorten the link. Default to one focused diagram; use a second when the request spans distinct views and separating them makes the explanation clearer.
 3. **Label language.** Write human-facing labels (subgraph titles, glosses, edge notes) in the **same language the user is using in this conversation**. Keep code identifiers (module paths, command names, package names) as they appear in the codebase.
 4. **Syntax-safe source.**
    Use the syntax of the selected diagram type. For flowcharts:
@@ -42,7 +42,7 @@ EOF
 ```
 
    - Default is `https://mermaid.live/view#pako:...` (read-only). Add `--edit` only if they may tweak.
-   - The script round-trip-checks the token and warns on stderr if the URL is very long. This verifies encoding integrity, not Mermaid syntax or successful rendering.
+   - The script round-trip-checks the token and prints a note on stderr if the URL is very long (it never blocks the output). This verifies encoding integrity, not Mermaid syntax or successful rendering.
    - If the helper is unavailable, this is the same algorithm (mermaid-live-editor `serializeState`):
 
 ```bash
@@ -52,14 +52,14 @@ flowchart TB
 EOF
 ```
 
-7. **Diagram reply shape:** one sentence of what the diagram covers → Markdown link to each live URL → Mermaid source only if they ask. Include analysis, changes, and validation results as needed for the rest of the user's task. No ASCII. No "saved to …" unless the user requested persistence and the diagram was actually saved.
+7. **Diagram reply shape:** one sentence of what the diagram covers → a Markdown link with descriptive text for each diagram, e.g. `[Module map of <project>](https://mermaid.live/view#pako:...)` → Mermaid source only if they ask. Never paste a bare URL into the reply, even though the script prints it bare; the URL is only the link target. Include analysis, changes, and validation results as needed for the rest of the user's task. No ASCII. No "saved to …" unless the user requested persistence and the diagram was actually saved.
 
 ## Common failure modes
 | Symptom | Likely cause | Fix |
 |--------|----------------|-----|
 | mermaid.live shows "Syntax error" | Unquoted label with punctuation / non-ASCII, or reserved id | Apply step 4, re-encode |
 | mermaid.live shows "Loading URL failed" | Raw deflate, standard Base64 (`+/`), or truncated link | Use the helper; make sure the whole URL was pasted |
-| Link huge / chat truncates | Too many nodes or long labels (helper warns > 6000 chars) | Cut to ~25 nodes; shorten labels |
+| Link huge / chat truncates | Very large graph or long labels (helper notes > 16000 chars); some chat clients truncate long links | Fold related nodes into `subgraph`s and shorten labels first; if still too long, tell the user and offer a second diagram. Do not silently drop nodes |
 | Empty diagram | Mermaid source never reached stdin | Feed it via heredoc as shown, not `python3 - <<PY` |
 | Invented boxes or edges | Drew without checking implementation | Inspect the relevant dependencies, wiring, and call sites; omit or mark inferred relationships |
 | Secrets on the diagram | Tokens/keys in labels | Redact; show env *names* only |
