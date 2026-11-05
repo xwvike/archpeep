@@ -4,7 +4,9 @@ description: >-
   Use when the user wants a quick, disposable diagram to understand a project's
   or feature's current architecture/design (not to save into the repo).
   Delivers a mermaid.live link instead of ASCII. Triggers: architecture
-  overview, module map, structure glance, call flow, archpeep.
+  overview, module map, structure glance, call flow, archpeep. Chinese: 看下现有架构,
+  模块关系, 调用链. Not for designing a new architecture or for diagrams meant
+  for docs or slides.
 ---
 # archpeep (throwaway architecture glance)
 
